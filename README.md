@@ -1,6 +1,6 @@
 # 🎵 Spoti-HiFi
 
-**Spoti-HiFi** es un downloader de Spotify que te permite descargar música en alta calidad (FLAC/MP3) directamente desde la plataforma.
+**Spoti-HiFi** es un downloader de Spotify que te permite descargar música en alta calidad (FLAC) directamente desde la plataforma.
 
 ![Brutalist Design](https://img.shields.io/badge/Design-Brutalist-black?style=for-the-badge)
 ![Windows](https://img.shields.io/badge/Platform-Windows-blue?style=for-the-badge)
@@ -10,11 +10,11 @@
 
 ## 🔧 ¿Cómo funciona?
 
-Spoti-HiFi utiliza APIs de terceros para obtener el audio de las canciones de Spotify. El proceso es simple:
+Spoti-HiFi utiliza APIs de terceros para obtener metadatos de spotify y descargarlo de terceros. El proceso es simple:
 
 1. **Búsqueda**: Ingresa el nombre de una canción, artista o álbum
 2. **Fetcheo**: La aplicación consulta APIs externas para localizar el audio en alta calidad
-3. **Descarga**: El archivo se descarga en formato FLAC (lossless) o MP3, según tu preferencia
+3. **Descarga**: El archivo se descarga en formato FLAC (lossless) mediante TIDAL, Qobuz y Amazon Music
 
 > ⚠️ **Nota**: Spoti-HiFi NO almacena ni distribuye música. Simplemente actúa como intermediario para obtener audio desde fuentes de terceros.
 
