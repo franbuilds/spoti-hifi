@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpotiHiFi // LOSSLESS AUDIO</title>
+  <script type="module" crossorigin src="/assets/index-D3KO_ITW.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-WQamdpPx.css">
+</head>
+<body>
+    <!-- Noise Overlay -->
+    <div class="noise-overlay"></div>
+
+    <!-- Marquee Header -->
+    <div class="marquee-container">
+        <div class="marquee-content">
+            SPOTIHIFI // PURE AUDIO EXTRACTION // FLAC LOSSLESS // FREE THE MUSIC // HIGH FIDELITY // NO TRANSCODING // SPOTIHIFI // PURE AUDIO EXTRACTION // FLAC LOSSLESS // FREE THE MUSIC // HIGH FIDELITY // NO TRANSCODING //
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <main class="main-container">
+
+        <!-- Header Section -->
+        <header class="neo-box header-box">
+            <div class="header-content">
+                <h1 class="logo">
+                    Spoti<span class="logo-hifi">HiFi</span>
+                </h1>
+                <p class="version-badge">V.3.0.0 // FLAC_ONLY</p>
+            </div>
+            
+            <div class="header-dots">
+                <div class="dot dot-orange"></div>
+                <div class="dot dot-cyan"></div>
+                <div class="dot dot-magenta"></div>
+            </div>
+            
+            <div class="header-bg-text">HIFI</div>
+        </header>
+
+        <!-- Search Section -->
+        <section class="neo-box search-section">
+            <label class="section-title">
+                <span>BUSCAR MÚSICA</span>
+                <span id="globalLoader" class="loader-badge hidden">
+                    <span class="loader"></span> BUSCANDO...
+                </span>
+            </label>
+            
+            <div class="search-row">
+                <input type="text" id="searchInput" 
+                    class="neo-input" 
+                    placeholder="Nombre de canción, artista o álbum..." 
+                    autocomplete="off">
+                <button id="btnSearch" class="neo-button btn-search">
+                    BUSCAR
+                </button>
+            </div>
+
+            <!-- Search Results Grid -->
+            <div id="resultsContainer" class="results-grid hidden">
+                <!-- Results will be populated here -->
+            </div>
+
+            <!-- Selected Track Card -->
+            <div id="selectedTrackCard" class="selected-track hidden">
+                <div class="track-cover-container">
+                    <img id="selectedCover" src="" class="track-cover" alt="cover">
+                </div>
+                <div class="track-info">
+                    <div id="selectedTitle" class="track-title">Unknown Title</div>
+                    <div id="selectedArtist" class="track-artist">Unknown Artist</div>
+                    <div id="selectedAlbum" class="track-album">Unknown Album</div>
+                </div>
+                <div class="track-badge">SELECTED</div>
+            </div>
+            
+            <!-- Download Action -->
+            <div id="downloadActionArea" class="download-area hidden">
+                <div class="format-badge">
+                    <span class="format-icon">♪</span>
+                    <span>FLAC LOSSLESS</span>
+                </div>
+                <button id="btnDownload" class="neo-button btn-download">
+                    DESCARGAR FLAC
+                </button>
+            </div>
+
+            <!-- Download Progress -->
+            <div id="progressArea" class="progress-area hidden">
+                <div class="progress-info">
+                    <span id="progressText">Descargando...</span>
+                    <span id="progressPercent">0%</span>
+                </div>
+                <div class="progress-bar">
+                    <div id="progressFill" class="progress-fill"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Settings Section -->
+        <section class="neo-box settings-section">
+            <h3 class="section-title">CONFIGURACIÓN</h3>
+            <div class="settings-row">
+                <label class="setting-label">Carpeta de descarga:</label>
+                <div class="folder-select">
+                    <input type="text" id="downloadPath" class="neo-input folder-input" readonly>
+                    <button id="btnSelectFolder" class="neo-button btn-folder">📁</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>SPOTIHIFI // 2026 // FLAC LOSSLESS ONLY</p>
+        </footer>
+
+    </main>
+
+    <!-- RECEIPT MODAL OVERLAY -->
+    <div id="receiptOverlay" class="receipt-overlay hidden" onclick="closeReceipt(event)">
+        <div class="receipt-container">
+            <div class="receipt" onclick="event.stopPropagation()">
+                <div class="receipt-header">
+                    <h2 class="receipt-title">SPOTIHIFI</h2>
+                    <p class="receipt-subtitle">RECEIPT OF DOWNLOAD</p>
+                    <p class="receipt-divider">--------------------------------</p>
+                </div>
+                
+                <div class="receipt-row">
+                    <span>DATE:</span>
+                    <span id="rcptDate">--/--/--</span>
+                </div>
+                <div class="receipt-row">
+                    <span>TIME:</span>
+                    <span id="rcptTime">--:--</span>
+                </div>
+
+                <div class="receipt-items">
+                    <div class="receipt-row receipt-header-row">
+                        <span>ITEM</span>
+                        <span>FORMAT</span>
+                    </div>
+                    <div class="receipt-row">
+                        <span class="receipt-item" id="rcptItem">TRACK_NAME</span>
+                        <span>FLAC</span>
+                    </div>
+                    <div class="receipt-row receipt-small">
+                        <span id="rcptArtist">ARTIST</span>
+                        <span>LOSSLESS</span>
+                    </div>
+                </div>
+
+                <div class="receipt-total">
+                    <div class="receipt-row receipt-total-row">
+                        <span>TOTAL</span>
+                        <span>$0.00</span>
+                    </div>
+                </div>
+
+                <div class="receipt-footer">
+                    <p>THANK YOU FOR DOWNLOADING</p>
+                    <svg class="barcode" viewBox="0 0 100 20" preserveAspectRatio="none">
+                        <path fill="black" d="M0 0h2v20H0zM4 0h1v20H4zM6 0h3v20H6zM11 0h1v20H11zM14 0h1v20H14zM16 0h4v20H16zM22 0h2v20H22zM26 0h1v20H26zM29 0h1v20H29zM31 0h2v20H31zM35 0h2v20H35zM38 0h1v20H38zM41 0h3v20H41zM45 0h1v20H45zM48 0h1v20H48zM50 0h2v20H50zM54 0h2v20H54zM58 0h1v20H58zM60 0h2v20H60zM64 0h1v20H64zM67 0h3v20H67zM71 0h1v20H71zM74 0h2v20H74zM78 0h2v20H78zM82 0h1v20H82zM85 0h3v20H85zM90 0h2v20H90zM94 0h1v20H94zM97 0h2v20H97z" />
+                    </svg>
+                    <p>FILE: <span id="rcptFile">-</span></p>
+                </div>
+                
+                <button onclick="closeReceipt(null)" class="receipt-close-btn">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

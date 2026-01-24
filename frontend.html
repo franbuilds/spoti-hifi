@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpotiHiFi // LOSSLESS AUDIO</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- CORE AESTHETICS --- */
+        :root {
+            --bg-color: #ffffff;
+            --ink-color: #000000;
+            --ega-orange: #ff5555;
+            --ega-cyan: #55ffff;
+            --ega-green: #55ff55;
+            --ega-magenta: #ff55ff;
+            --ega-yellow: #ffff55;
+            --border-width: 3px;
+            --shadow-depth: 6px;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--ink-color);
+            font-family: 'Space Mono', monospace;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* --- GRAIN EFFECT --- */
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 50;
+            opacity: 0.09;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* --- BRUTALIST COMPONENTS --- */
+        .neo-box {
+            border: var(--border-width) solid var(--ink-color);
+            background: white;
+            box-shadow: var(--shadow-depth) var(--shadow-depth) 0px 0px var(--ink-color);
+            transition: all 0.1s ease-in-out;
+        }
+
+        .neo-button {
+            border: var(--border-width) solid var(--ink-color);
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: var(--shadow-depth) var(--shadow-depth) 0px 0px var(--ink-color);
+            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .neo-button:hover {
+            transform: translate(-2px, -2px);
+            box-shadow: calc(var(--shadow-depth) + 2px) calc(var(--shadow-depth) + 2px) 0px 0px var(--ink-color);
+        }
+
+        .neo-button:active {
+            transform: translate(var(--shadow-depth), var(--shadow-depth));
+            box-shadow: 0px 0px 0px 0px var(--ink-color);
+        }
+
+        .neo-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: var(--shadow-depth) var(--shadow-depth) 0px 0px var(--ink-color) !important;
+        }
+
+        .neo-input {
+            border: var(--border-width) solid var(--ink-color);
+            outline: none;
+            border-radius: 0;
+            transition: background 0.2s;
+        }
+        .neo-input:focus {
+            background: #f0f0f0;
+        }
+
+        /* --- RECEIPT STYLE --- */
+        .receipt-container {
+            perspective: 1000px;
+        }
+
+        .receipt {
+            background: #fff;
+            width: 320px;
+            padding: 20px;
+            margin: 0 auto;
+            position: relative;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            font-family: 'VT323', monospace; 
+            font-size: 1.1rem;
+            color: #333;
+            /* Crumpled effect using transform and a textured gradient */
+            transform: rotate(-2deg) rotateX(5deg);
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.9)),
+                url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.5' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.1'/%3E%3C/svg%3E");
+            animation: printReceipt 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+        }
+
+        /* Zigzag edges for receipt */
+        .receipt::before, .receipt::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background-size: 12px 12px;
+            background-repeat: repeat-x;
+        }
+        .receipt::before {
+            top: -6px;
+            background-image: linear-gradient(135deg, transparent 50%, #fff 50%), linear-gradient(225deg, transparent 50%, #fff 50%);
+            background-position: bottom left;
+        }
+        .receipt::after {
+            bottom: -6px;
+            background-image: linear-gradient(135deg, #fff 50%, transparent 50%), linear-gradient(225deg, #fff 50%, transparent 50%);
+            background-position: top left;
+        }
+
+        @keyframes printReceipt {
+            0% { transform: translateY(-50px) rotate(0deg) scale(0.9); opacity: 0; }
+            100% { transform: translateY(0) rotate(-2deg) scale(1); opacity: 1; }
+        }
+
+        /* --- LOADING SPINNER --- */
+        .loader {
+            width: 24px;
+            height: 24px;
+            border: 4px solid #000;
+            border-bottom-color: transparent;
+            border-radius: 50%;
+            display: inline-block;
+            box-sizing: border-box;
+            animation: rotation 1s linear infinite;
+        }
+
+        @keyframes rotation {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* --- UTILS --- */
+        .marquee-container {
+            border-bottom: var(--border-width) solid var(--ink-color);
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .marquee-content {
+            display: inline-block;
+            animation: scroll 20s linear infinite;
+        }
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .hidden-visually {
+            display: none !important;
+        }
+        
+        .blur-locked {
+            filter: blur(4px) grayscale(100%);
+            opacity: 0.4;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 12px; }
+        ::-webkit-scrollbar-track { background: #fff; border-left: 3px solid #000; }
+        ::-webkit-scrollbar-thumb { background: #000; border: 2px solid #fff; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--ega-orange); }
+
+    </style>
+</head>
+<body class="flex flex-col items-center">
+
+    <!-- Noise Overlay -->
+    <div class="noise-overlay"></div>
+
+    <!-- Marquee Header -->
+    <div class="w-full marquee-container bg-white py-2 z-40 relative">
+        <div class="marquee-content font-bold tracking-widest text-sm">
+            SPOTIHIFI // PURE AUDIO EXTRACTION // 16BIT-24BIT FLAC // FREE THE MUSIC // HIGH FIDELITY // NO TRANSCODING // SPOTIHIFI // PURE AUDIO EXTRACTION // 16BIT-24BIT FLAC // FREE THE MUSIC // HIGH FIDELITY // NO TRANSCODING //
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <main class="w-full max-w-4xl p-6 mt-8 mb-20 z-10 flex flex-col gap-8">
+
+        <!-- Header Section -->
+        <header class="neo-box p-8 flex flex-col md:flex-row justify-between items-start md:items-center relative overflow-hidden">
+            <div class="relative z-10">
+                <h1 class="text-5xl md:text-7xl font-bold tracking-tighter leading-none mb-2">
+                    Spoti<span class="text-transparent" style="-webkit-text-stroke: 2px black; color: var(--ega-cyan);">HiFi</span>
+                </h1>
+                <p class="text-sm font-bold bg-black text-white inline-block px-2 py-1">V.3.0.0 // RETAIL_BUILD</p>
+            </div>
+            
+            <div class="mt-4 md:mt-0 flex gap-2">
+                <div class="w-4 h-4 border-2 border-black bg-ega-orange rounded-full"></div>
+                <div class="w-4 h-4 border-2 border-black bg-ega-cyan rounded-full"></div>
+                <div class="w-4 h-4 border-2 border-black bg-ega-magenta rounded-full"></div>
+            </div>
+            
+            <!-- Decoración de fondo -->
+            <div class="absolute -right-10 -bottom-10 text-9xl opacity-5 select-none pointer-events-none">
+                HIFI
+            </div>
+        </header>
+
+        <!-- Input Control Panel -->
+        <section class="grid grid-cols-1 md:grid-cols-12 gap-6">
+            
+            <!-- Left: Settings (Initially Locked) -->
+            <div class="col-span-1 md:col-span-4 flex flex-col gap-4">
+                <div id="settingsPanel" class="neo-box p-4 bg-white h-full flex flex-col justify-between transition-all duration-500 blur-locked">
+                    
+                    <!-- Overlay for Locked State -->
+                    <div id="settingsOverlay" class="absolute inset-0 z-20 flex items-center justify-center bg-white/50">
+                        <span class="font-bold bg-black text-white px-2 py-1 text-xs rotate-12">ESPERANDO LINK</span>
+                    </div>
+
+                    <div>
+                        <label class="block font-bold mb-2 text-xs uppercase tracking-widest border-b-2 border-black pb-1">Formatos Disponibles</label>
+                        <div class="flex flex-col gap-2 mt-2">
+                            <label class="flex items-center gap-2 cursor-pointer hover:bg-gray-100 p-1 border border-transparent hover:border-black transition-all">
+                                <input type="radio" name="quality" value="160" class="accent-black w-4 h-4">
+                                <span>MP3 (160k)</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer hover:bg-gray-100 p-1 border border-transparent hover:border-black transition-all">
+                                <input type="radio" name="quality" value="320" class="accent-black w-4 h-4">
+                                <span>MP3 (320k)</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer hover:bg-gray-100 p-1 border border-transparent hover:border-black transition-all bg-ega-cyan bg-opacity-20 border-black font-bold">
+                                <input type="radio" name="quality" value="flac" checked class="accent-black w-4 h-4">
+                                <span>FLAC (Lossless)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="mt-6">
+                        <label class="block font-bold mb-2 text-xs uppercase tracking-widest border-b-2 border-black pb-1">Tipo</label>
+                        <div class="flex gap-2 mt-2">
+                            <div class="flex-1 border-2 border-black py-1 text-xs font-bold text-center bg-black text-white">TRACK</div>
+                            <div class="flex-1 border-2 border-black py-1 text-xs font-bold text-center opacity-30">ALBUM</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Input & Action -->
+            <div class="col-span-1 md:col-span-8 flex flex-col gap-4">
+                <div class="neo-box p-6 bg-white relative min-h-[300px] flex flex-col">
+                    <label class="block font-bold mb-4 text-xl flex justify-between items-center">
+                        <span>BUSCAR / URL</span>
+                        <!-- Global Spinner (Hidden by default) -->
+                        <span id="globalLoader" class="hidden-visually flex items-center gap-2 text-xs bg-ega-yellow px-2 py-1 border border-black">
+                            <span class="loader w-3 h-3 border-2"></span> PROCESANDO...
+                        </span>
+                    </label>
+                    
+                    <div class="flex flex-col gap-4 flex-grow">
+                        <div class="flex gap-0 relative">
+                            <input type="text" id="urlInput" 
+                                class="neo-input w-full p-4 text-lg font-bold placeholder-gray-400 border-r-0" 
+                                placeholder="Link de Spotify o nombre de canción..." 
+                                autocomplete="off">
+                             <!-- Clear Button -->
+                             <button onclick="resetUI()" class="absolute right-[120px] top-4 text-gray-400 hover:text-black font-bold hidden" id="clearBtn">X</button>
+                             
+                             <!-- Search Button -->
+                             <button id="btnSearch" class="neo-button bg-ega-cyan text-black py-4 px-6 w-[120px] hover:bg-[#88ffff] border-l-2">
+                                BUSCAR
+                            </button>
+                        </div>
+
+                        <!-- Found Track Card (Initially Hidden) -->
+                        <div id="foundTrackCard" class="hidden-visually border-2 border-black p-2 bg-gray-50 flex gap-4 items-center">
+                            <div class="w-16 h-16 bg-gray-300 border border-black flex-shrink-0">
+                                <img id="albumArt" src="" class="w-full h-full object-cover grayscale hover:grayscale-0 transition-all">
+                            </div>
+                            <div class="flex-grow overflow-hidden">
+                                <div id="trackTitle" class="font-bold text-lg truncate">Unknown Title</div>
+                                <div id="trackArtist" class="text-sm uppercase tracking-wider truncate">Unknown Artist</div>
+                            </div>
+                            <div class="text-xs font-bold bg-ega-green px-2 py-1 border border-black">
+                                FOUND
+                            </div>
+                        </div>
+                        
+                        <!-- Download Action (Initially Hidden) -->
+                        <div id="downloadActionArea" class="hidden-visually pt-2 border-t-2 border-black border-dashed mt-auto">
+                            <button id="btnDownload" class="neo-button bg-ega-orange text-black py-4 px-8 text-xl w-full hover:bg-[#ff7777] shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                                DESCARGAR AHORA
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Decorative corner -->
+                    <div class="absolute top-0 right-0 p-2">
+                         <div class="w-0 h-0 border-l-[20px] border-l-transparent border-t-[20px] border-t-black"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Gallery / Recent (Static aesthetic) -->
+        <section class="neo-box p-6 bg-white">
+            <h3 class="font-bold text-xl mb-4 border-b-4 border-ega-cyan inline-block">FEED GLOBAL</h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="border-2 border-black p-2 hover:bg-ega-yellow transition-colors cursor-pointer group">
+                    <div class="bg-gray-200 h-32 w-full mb-2 border border-black overflow-hidden relative">
+                         <img src="https://picsum.photos/200/200?random=1" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all" alt="cover">
+                    </div>
+                    <div class="font-bold text-xs truncate">Dark Side of the Moon</div>
+                </div>
+                <div class="border-2 border-black p-2 hover:bg-ega-cyan transition-colors cursor-pointer group">
+                    <div class="bg-gray-200 h-32 w-full mb-2 border border-black overflow-hidden">
+                        <img src="https://picsum.photos/200/200?random=2" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all" alt="cover">
+                    </div>
+                    <div class="font-bold text-xs truncate">Currents</div>
+                </div>
+                <div class="border-2 border-black p-2 hover:bg-ega-magenta transition-colors cursor-pointer group">
+                    <div class="bg-gray-200 h-32 w-full mb-2 border border-black overflow-hidden">
+                        <img src="https://picsum.photos/200/200?random=3" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all" alt="cover">
+                    </div>
+                    <div class="font-bold text-xs truncate">After Hours</div>
+                </div>
+                <div class="border-2 border-black p-2 hover:bg-ega-green transition-colors cursor-pointer group">
+                    <div class="bg-gray-200 h-32 w-full mb-2 border border-black overflow-hidden">
+                        <img src="https://picsum.photos/200/200?random=4" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all" alt="cover">
+                    </div>
+                    <div class="font-bold text-xs truncate">Random Access Memories</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="text-center text-xs font-bold mt-8 opacity-60 pb-8">
+            <p>SPOTIHIFI FRONTEND // 2024</p>
+        </footer>
+
+    </main>
+
+    <!-- RECEIPT MODAL OVERLAY -->
+    <div id="receiptOverlay" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 hidden-visually backdrop-blur-sm" onclick="closeReceipt(event)">
+        <div class="receipt-container" id="receiptContainer">
+            <div class="receipt" onclick="event.stopPropagation()">
+                <div class="text-center mb-4">
+                    <h2 class="text-2xl font-bold tracking-widest">SPOTIHIFI</h2>
+                    <p class="text-sm">RECEIPT OF TRANSACTION</p>
+                    <p class="text-xs">--------------------------------</p>
+                </div>
+                
+                <div class="flex justify-between text-sm mb-1">
+                    <span>DATE:</span>
+                    <span id="rcptDate">--/--/--</span>
+                </div>
+                <div class="flex justify-between text-sm mb-4">
+                    <span>TIME:</span>
+                    <span id="rcptTime">--:--</span>
+                </div>
+
+                <div class="mb-4">
+                    <div class="flex justify-between font-bold border-b border-black border-dashed pb-1 mb-2">
+                        <span>ITEM</span>
+                        <span>QTY</span>
+                    </div>
+                    <div class="flex justify-between mb-1">
+                        <span class="truncate w-3/4" id="rcptItem">TRACK_NAME</span>
+                        <span>1</span>
+                    </div>
+                    <div class="flex justify-between text-xs text-gray-500 mb-2">
+                        <span id="rcptQuality">FORMAT: FLAC 16-BIT</span>
+                        <span id="rcptSize">45.2 MB</span>
+                    </div>
+                </div>
+
+                <div class="border-t-2 border-black border-dashed pt-2 mb-4">
+                    <div class="flex justify-between font-bold text-lg">
+                        <span>TOTAL</span>
+                        <span>$0.00</span>
+                    </div>
+                </div>
+
+                <div class="text-center text-xs space-y-2">
+                    <p>THANK YOU FOR DOWNLOADING</p>
+                    <div class="py-2">
+                        <svg id="barcode" class="w-full h-12" viewBox="0 0 100 20" preserveAspectRatio="none">
+                            <path fill="black" d="M0 0h2v20H0zM4 0h1v20H4zM6 0h3v20H6zM11 0h1v20H11zM14 0h1v20H14zM16 0h4v20H16zM22 0h2v20H22zM26 0h1v20H26zM29 0h1v20H29zM31 0h2v20H31zM35 0h2v20H35zM38 0h1v20H38zM41 0h3v20H41zM45 0h1v20H45zM48 0h1v20H48zM50 0h2v20H50zM54 0h2v20H54zM58 0h1v20H58zM60 0h2v20H60zM64 0h1v20H64zM67 0h3v20H67zM71 0h1v20H71zM74 0h2v20H74zM78 0h2v20H78zM82 0h1v20H82zM85 0h3v20H85zM90 0h2v20H90zM94 0h1v20H94zM97 0h2v20H97z" />
+                        </svg>
+                    </div>
+                    <p>AUTH CODE: <span id="authCode">XH-9923</span></p>
+                </div>
+                
+                <button onclick="closeReceipt(null)" class="w-full mt-4 bg-black text-white py-2 font-bold hover:bg-ega-orange hover:text-black transition-colors uppercase text-sm border-0">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const btnSearch = document.getElementById('btnSearch');
+        const btnDownload = document.getElementById('btnDownload');
+        const urlInput = document.getElementById('urlInput');
+        const settingsPanel = document.getElementById('settingsPanel');
+        const settingsOverlay = document.getElementById('settingsOverlay');
+        const foundTrackCard = document.getElementById('foundTrackCard');
+        const downloadActionArea = document.getElementById('downloadActionArea');
+        const globalLoader = document.getElementById('globalLoader');
+        const receiptOverlay = document.getElementById('receiptOverlay');
+        
+        // Mock Data
+        const MOCK_RESULTS = [
+            { artist: "The Weeknd", title: "Blinding Lights", img: "https://picsum.photos/200/200?random=10" },
+            { artist: "Daft Punk", title: "Instant Crush", img: "https://picsum.photos/200/200?random=11" },
+            { artist: "Rosalía", title: "DESPECHÁ", img: "https://picsum.photos/200/200?random=12" }
+        ];
+
+        let currentTrack = null;
+
+        function showLoader(show) {
+            if (show) globalLoader.classList.remove('hidden-visually');
+            else globalLoader.classList.add('hidden-visually');
+        }
+
+        function unlockUI(data) {
+            currentTrack = data;
+            // Update Track Info
+            document.getElementById('trackTitle').innerText = data.title;
+            document.getElementById('trackArtist').innerText = data.artist;
+            document.getElementById('albumArt').src = data.img;
+
+            // Visual transitions
+            foundTrackCard.classList.remove('hidden-visually');
+            downloadActionArea.classList.remove('hidden-visually');
+            
+            // Unlock Settings
+            settingsPanel.classList.remove('blur-locked');
+            settingsOverlay.classList.add('hidden-visually');
+        }
+
+        function resetUI() {
+            urlInput.value = '';
+            foundTrackCard.classList.add('hidden-visually');
+            downloadActionArea.classList.add('hidden-visually');
+            settingsPanel.classList.add('blur-locked');
+            settingsOverlay.classList.remove('hidden-visually');
+            btnSearch.disabled = false;
+            btnSearch.innerHTML = 'BUSCAR';
+            currentTrack = null;
+        }
+
+        function generateReceipt() {
+            const now = new Date();
+            const quality = document.querySelector('input[name="quality"]:checked').value;
+            let formatText = "FLAC 16-BIT";
+            let size = (Math.random() * (50 - 20) + 20).toFixed(1) + " MB";
+            
+            if (quality === "320") { formatText = "MP3 320KBPS"; size = "8.4 MB"; }
+            if (quality === "160") { formatText = "MP3 160KBPS"; size = "4.2 MB"; }
+
+            document.getElementById('rcptDate').innerText = now.toLocaleDateString();
+            document.getElementById('rcptTime').innerText = now.toLocaleTimeString();
+            document.getElementById('rcptItem').innerText = (currentTrack ? currentTrack.title : "UNKNOWN").toUpperCase();
+            document.getElementById('rcptQuality').innerText = formatText;
+            document.getElementById('rcptSize').innerText = size;
+            document.getElementById('authCode').innerText = "DL-" + Math.floor(Math.random() * 9000 + 1000);
+
+            receiptOverlay.classList.remove('hidden-visually');
+        }
+
+        function closeReceipt(e) {
+            receiptOverlay.classList.add('hidden-visually');
+            resetUI();
+        }
+
+        // --- STEP 1: SEARCH / FETCH ---
+        btnSearch.addEventListener('click', () => {
+            const query = urlInput.value.trim();
+
+            if (!query) {
+                urlInput.focus();
+                return;
+            }
+
+            // UI Loading State
+            btnSearch.disabled = true;
+            btnSearch.innerHTML = '<span class="loader w-3 h-3 border-black border-2"></span>';
+            showLoader(true);
+
+            // Simulate Network Delay
+            setTimeout(() => {
+                let foundData;
+                if (query.includes('spotify.com')) {
+                    foundData = MOCK_RESULTS[0]; 
+                } else {
+                    foundData = MOCK_RESULTS[Math.floor(Math.random() * MOCK_RESULTS.length)];
+                }
+
+                setTimeout(() => {
+                    btnSearch.disabled = false;
+                    btnSearch.innerText = 'BUSCAR';
+                    showLoader(false);
+                    unlockUI(foundData);
+                }, 800);
+
+            }, 1500);
+        });
+
+        // --- STEP 2: DOWNLOAD ---
+        btnDownload.addEventListener('click', () => {
+            btnDownload.disabled = true;
+            btnDownload.innerHTML = '<span class="loader w-4 h-4 border-black border-2 mr-2"></span> DESCARGANDO...';
+            showLoader(true);
+            
+            // Simulate download time
+            setTimeout(() => {
+                btnDownload.innerText = 'DESCARGAR AHORA';
+                btnDownload.disabled = false;
+                showLoader(false);
+                generateReceipt();
+            }, 3000);
+        });
+    </script>
+</body>
+</html>
