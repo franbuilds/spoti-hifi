@@ -1,0 +1,81 @@
+# 🎵 Spoti-HiFi
+
+**Spoti-HiFi** es un downloader de Spotify que te permite descargar música en alta calidad (FLAC/MP3) directamente desde la plataforma.
+
+![Brutalist Design](https://img.shields.io/badge/Design-Brutalist-black?style=for-the-badge)
+![Windows](https://img.shields.io/badge/Platform-Windows-blue?style=for-the-badge)
+![Free](https://img.shields.io/badge/Price-Free-green?style=for-the-badge)
+
+---
+
+## 🔧 ¿Cómo funciona?
+
+Spoti-HiFi utiliza APIs de terceros para obtener el audio de las canciones de Spotify. El proceso es simple:
+
+1. **Búsqueda**: Ingresa el nombre de una canción, artista o álbum
+2. **Fetcheo**: La aplicación consulta APIs externas para localizar el audio en alta calidad
+3. **Descarga**: El archivo se descarga en formato FLAC (lossless) o MP3, según tu preferencia
+
+> ⚠️ **Nota**: Spoti-HiFi NO almacena ni distribuye música. Simplemente actúa como intermediario para obtener audio desde fuentes de terceros.
+
+---
+
+## 🎨 Diseño
+
+La interfaz de Spoti-HiFi está inspirada en el **brutalismo moderno de software** — un enfoque de diseño que prioriza:
+
+- **Funcionalidad sobre decoración**
+- **Tipografía bold y contrastes fuertes**
+- **Elementos visuales directos y sin pretensiones**
+- **Experiencia de usuario clara y eficiente**
+
+---
+
+## 🚀 Ejecución
+
+Simplemente ejecuta el archivo:
+
+```
+SpotiHiFi.exe
+```
+
+No requiere instalación. Descarga, ejecuta y listo.
+
+---
+
+## ❓ Preguntas Frecuentes
+
+### ¿Es gratis?
+**Sí, completamente gratis.** No hay pagos, suscripciones ni costos ocultos.
+
+### ¿De dónde viene el audio?
+El audio se obtiene a través de **APIs de terceros**. Spoti-HiFi no almacena música en sus servidores.
+
+### ¿Por qué mi antivirus lo detecta como amenaza?
+Es un **falso positivo**. Esto ocurre porque la aplicación:
+- Realiza conexiones de red a APIs externas
+- Está empaquetada como ejecutable portable
+- No tiene firma digital de desarrollador verificado
+
+Puedes agregar una excepción en tu antivirus o revisar el código fuente para verificar que es seguro.
+
+### ¿Es legal?
+El uso de esta herramienta es bajo tu propia responsabilidad. Asegúrate de cumplir con las leyes de derechos de autor de tu país.
+
+---
+
+## 🙏 Créditos
+
+Este proyecto funciona gracias al increíble trabajo de **[afkarxyz](https://github.com/afkarxyz)** y su repositorio **[SpotiFLAC](https://github.com/afkarxyz/SpotiFLAC)**, que proporciona la lógica principal para obtener audio de Spotify en alta calidad.
+
+<p align="center">
+  <a href="https://github.com/afkarxyz/SpotiFLAC">
+    <img src="https://img.shields.io/badge/Powered%20by-SpotiFLAC-1DB954?style=for-the-badge&logo=spotify&logoColor=white" alt="Powered by SpotiFLAC">
+  </a>
+</p>
+
+---
+
+<p align="center">
+  <sub>Made with 🖤 for music lovers</sub>
+</p>
