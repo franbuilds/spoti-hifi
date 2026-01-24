@@ -4,6 +4,7 @@
 
 ![Brutalist Design](https://img.shields.io/badge/Design-Brutalist-black?style=for-the-badge)
 ![Windows](https://img.shields.io/badge/Platform-Windows-blue?style=for-the-badge)
+![Linux](https://img.shields.io/badge/Platform-Linux-orange?style=for-the-badge)
 ![Free](https://img.shields.io/badge/Price-Free-green?style=for-the-badge)
 
 ---
@@ -33,14 +34,65 @@ La interfaz de Spoti-HiFi está inspirada en el **brutalismo moderno de software
 
 ## 🚀 Ejecución
 
+### Windows
+
 Simplemente ejecuta el archivo:
 
 ```
 SpotiHiFi.exe
 ```
+
 [![Descargar Spoti-HiFi](https://img.shields.io/badge/DESCARGAR-Spoti--HiFi-1DB954?style=for-the-badge&logo=github&logoColor=white)](https://github.com/frfdez/spoti-hifi/releases/tag/Spotihifi)
 
 No requiere instalación. Descarga, ejecuta y listo.
+
+### Linux
+
+Descarga el binario `SpotiHiFi` y ejecútalo:
+
+```bash
+chmod +x SpotiHiFi
+./SpotiHiFi
+```
+
+---
+
+## 🛠️ Compilar desde código fuente
+
+### Requisitos
+
+- [Go](https://golang.org/dl/) 1.21+
+- [Wails CLI](https://wails.io/) v2.x
+- [Node.js](https://nodejs.org/) 18+
+
+### Dependencias de Linux
+
+En **Fedora/RHEL**:
+```bash
+sudo dnf install gtk3-devel webkit2gtk4.1-devel glib2-devel libsoup3-devel
+```
+
+En **Ubuntu/Debian**:
+```bash
+sudo apt install libgtk-3-dev libwebkit2gtk-4.0-dev
+```
+
+### Build
+
+```bash
+cd spotihifi-app
+
+# Windows
+wails build -platform windows/amd64 -o SpotiHiFi.exe
+
+# Linux (Fedora/distros con webkit2gtk 4.1)
+wails build -platform linux/amd64 -o SpotiHiFi -tags webkit2_41
+
+# Linux (Ubuntu/distros con webkit2gtk 4.0)
+wails build -platform linux/amd64 -o SpotiHiFi
+```
+
+El ejecutable se genera en `build/bin/`.
 
 ---
 
