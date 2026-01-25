@@ -42,7 +42,7 @@ Simplemente ejecuta el archivo:
 SpotiHiFi.exe
 ```
 
-[![Descargar Spoti-HiFi](https://img.shields.io/badge/DESCARGAR-Spoti--HiFi-1DB954?style=for-the-badge&logo=github&logoColor=white)](https://github.com/frfdez/spoti-hifi/releases/tag/Spotihifi)
+[![Descargar Spoti-HiFi](https://img.shields.io/badge/DESCARGAR-Spoti--HiFi-1DB954?style=for-the-badge&logo=github&logoColor=white)](https://github.com/franbuilds/spoti-hifi/releases/tag/Spotihifi)
 
 No requiere instalación. Descarga, ejecuta y listo.
 
