@@ -45,6 +45,20 @@ body {
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 }
 
+.watermark-tag {
+    align-self: center;
+    margin: 16px auto 8px;
+    padding: 6px 24px;
+    font-size: 12px;
+    letter-spacing: 0.45em;
+    text-transform: uppercase;
+    border: var(--border-width) solid var(--ink-color);
+    background: var(--bg-color);
+    font-weight: 700;
+    box-shadow: var(--shadow-depth) var(--shadow-depth) 0 0 var(--ink-color);
+    pointer-events: none;
+}
+
 /* --- BRUTALIST COMPONENTS --- */
 .neo-box {
     border: var(--border-width) solid var(--ink-color);
@@ -146,6 +160,12 @@ body {
     overflow: hidden;
 }
 
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
 .logo {
     font-size: 48px;
     font-weight: bold;
@@ -183,6 +203,36 @@ body {
 .dot-orange { background: var(--ega-orange); }
 .dot-cyan { background: var(--ega-cyan); }
 .dot-magenta { background: var(--ega-magenta); }
+
+.github-link {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: var(--border-width) solid var(--ink-color);
+    background: white;
+    box-shadow: var(--shadow-depth) var(--shadow-depth) 0 0 var(--ink-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    text-decoration: none;
+}
+
+.github-link svg {
+    width: 22px;
+    height: 22px;
+    fill: var(--ink-color);
+}
+
+.github-link:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: calc(var(--shadow-depth) + 2px) calc(var(--shadow-depth) + 2px) 0 0 var(--ink-color);
+}
+
+.github-link:focus-visible {
+    outline: 2px dashed var(--ink-color);
+    outline-offset: 4px;
+}
 
 .header-bg-text {
     position: absolute;
